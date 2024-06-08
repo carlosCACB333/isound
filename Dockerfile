@@ -7,7 +7,6 @@ WORKDIR /app
 RUN cargo install cargo-watch
 RUN cargo install diesel_cli
 COPY . .
-EXPOSE 8080
 CMD ["cargo", "watch", "-x", "run"]
 
 FROM base as builder
@@ -16,11 +15,11 @@ COPY . .
 RUN cargo build --release
 
 FROM debian:12.2 as production
-RUN apt-get update && apt-get install -y libpq5
+RUN apt-get update && apt-get install -y libpq5 openssl
 ENV STAGE=production
 WORKDIR /app
 COPY --from=builder /app/target/release/isound .
 COPY --from=builder /app/static ./static
 
-CMD ["./app"]
+CMD ["./isound"]
 

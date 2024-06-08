@@ -3,15 +3,15 @@ services:
     image: ${APP_IMAGE}
     build:
       context: .
-      target: ${APP_ENV}
+      target: ${STAGE}
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
       - PORT=${APP_PORT}
     env_file:
       - .env
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
     networks:
       - isound-net
 

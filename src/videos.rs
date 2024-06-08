@@ -1,4 +1,5 @@
 use actix_web::{get, web, HttpResponse, Responder};
+use reqwest::Client;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -15,7 +16,12 @@ pub async fn search_videos(query: web::Query<Query>) -> impl Responder {
         q, api_key
     );
 
-    let response = reqwest::get(&url).await.unwrap();
+    let client = Client::builder()
+        .danger_accept_invalid_certs(true)
+        .build()
+        .unwrap();
+
+    let response = client.get(&url).send().await.unwrap();
     let results = response.json::<serde_json::Value>().await.unwrap();
 
     HttpResponse::Ok().json(results)

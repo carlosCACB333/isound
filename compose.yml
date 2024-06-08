@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ${APP_IMAGE}
+    build:
+      context: .
+      target: ${APP_ENV}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+      - PORT=${APP_PORT}
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - isound-net
+
+networks:
+  isound-net:

@@ -15,7 +15,8 @@ COPY . .
 RUN cargo build --release
 
 FROM debian:12.2 as production
-RUN apt-get update && apt-get install -y libpq5 openssl
+RUN apt-get update && apt-get install -y libpq5 openssl ca-certificates
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENV STAGE=production
 WORKDIR /app
 RUN mkdir -p /app/temp

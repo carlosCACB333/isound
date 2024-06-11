@@ -1,5 +1,6 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use reqwest::Client;
+use rustube::{Id, VideoFetcher};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -27,6 +28,30 @@ pub async fn search_videos(query: web::Query<Query>) -> impl Responder {
     HttpResponse::Ok().json(results)
 }
 
+#[get("/{id}")]
+pub async fn get_video(id: web::Path<String>) -> impl Responder {
+    // using rustube
+
+    let video_id = Id::from_str(&id).unwrap();
+    let fetcher = VideoFetcher::from_id(video_id.into_owned())
+        .unwrap()
+        .fetch()
+        .await
+        .unwrap();
+
+    let video = fetcher.clone().descramble().unwrap();
+    let stream = video
+        .streams()
+        .iter()
+        .filter(|stream| stream.includes_video_track && stream.includes_audio_track)
+        .max_by_key(|stream| stream.quality_label)
+        .unwrap();
+
+    HttpResponse::Ok().json(stream)
+}
+
 pub fn routes() -> actix_web::Scope {
-    web::scope("/videos").service(search_videos)
+    web::scope("/videos")
+        .service(search_videos)
+        .service(get_video)
 }

@@ -18,6 +18,7 @@ FROM debian:12.2 as production
 RUN apt-get update && apt-get install -y libpq5 openssl
 ENV STAGE=production
 WORKDIR /app
+RUN mkdir -p /app/temp
 COPY --from=builder /app/target/release/isound .
 COPY --from=builder /app/static ./static
 

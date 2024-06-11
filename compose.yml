@@ -10,8 +10,8 @@ services:
       - PORT=${APP_PORT}
     env_file:
       - .env
-    # volumes:
-    #   - .:/app
+    volumes:
+      - .:/app
     networks:
       - isound-net
 

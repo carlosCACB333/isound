@@ -1,13 +1,10 @@
+use actix_files::Files;
+use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use dotenvy::dotenv;
+use env_logger::Env;
+use log::info;
 use std::env;
 
-use actix_files::Files;
-use actix_web::{
-    get,
-    web::{self},
-    App, HttpResponse, HttpServer, Responder,
-};
-
-use dotenvy::dotenv;
 // mod schema;
 // mod tools;
 // mod users;
@@ -20,11 +17,14 @@ async fn main() -> std::io::Result<()> {
         dotenv().ok();
     }
     let port = u16::from_str_radix(&std::env::var("APP_PORT").unwrap(), 10).unwrap();
+    env_logger::init_from_env(Env::default().default_filter_or("trace"));
+
     HttpServer::new(move || {
-        print!("Starting server on port: {}", port);
+        info!("Starting server on port {}", port);
         App::new()
             // .app_data(Data::new(pool.clone()))
             // .service(users::routes())
+            .wrap(Logger::default())
             .service(videos::routes())
             .service(Files::new("/static", "static").show_files_listing())
             .service(web::scope("").service(home_page))

@@ -13,3 +13,6 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.12", features = ["json"] }
 openssl = { version = "0.10", features = ["vendored"] }
+rustube = "0.6"
+env_logger = "0.11"
+log = "0.4"
